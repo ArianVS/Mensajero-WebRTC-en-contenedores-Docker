@@ -1,0 +1,22 @@
+@startuml
+top to bottom direction
+skinparam dpi 300
+skinparam shadowing false
+skinparam componentStyle uml2
+
+package "Navegador Cliente (HTML/JS)" {
+  [Interfaz Web (UI)] --> [Gestor MediaDevices] : permisos
+  [Interfaz Web (UI)] --> [Gestor WebRTC] : llamada
+  [Interfaz Web (UI)] --> [Cliente Señalización (WS)] : eventos
+  [Gestor MediaDevices] --> [Gestor WebRTC] : MediaStream
+  [Gestor WebRTC] *-- [RTCDataChannel (Chat/Archivos)]
+}
+
+package "Nodo Servidor (Contenedor Docker)" {
+  [Servidor HTTP (Express)]
+  [Servidor Señalización (ws)] <--> [Enrutador Inter-Nodo]
+}
+
+[Interfaz Web (UI)] ..> [Servidor HTTP (Express)] : HTTPS
+[Cliente Señalización (WS)] <--> [Servidor Señalización (ws)] : WSS
+@enduml

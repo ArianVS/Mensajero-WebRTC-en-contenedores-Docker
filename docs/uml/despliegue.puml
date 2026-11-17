@@ -1,0 +1,35 @@
+@startuml
+top to bottom direction
+skinparam dpi 300
+skinparam shadowing false
+
+node "Cliente A (Navegador)" as ca
+node "Cliente B (Navegador)" as cb
+
+node "Equipo Anfitrión (Docker Engine)" {
+  node "Contenedor: caddy-proxy" as proxy {
+    artifact "Caddy TLS (8443, 8444)"
+  }
+
+  node "Red Docker Bridge (red-webrtc)" {
+    node "Contenedor: nodo-a" as na {
+      artifact "Node.js :3000"
+    }
+    node "Contenedor: nodo-b" as nb {
+      artifact "Node.js :3000"
+    }
+    node "Contenedor: coturn" as turn {
+      artifact "STUN/TURN :3478"
+    }
+  }
+}
+
+ca --> proxy : HTTPS/WSS (8443)
+cb --> proxy : HTTPS/WSS (8444)
+proxy --> na : HTTP/WS
+proxy --> nb : HTTP/WS
+na <--> nb : WS Inter-Nodo
+ca <--> cb : SRTP / SCTP (P2P)
+ca ..> turn : STUN/TURN
+cb ..> turn : STUN/TURN
+@enduml

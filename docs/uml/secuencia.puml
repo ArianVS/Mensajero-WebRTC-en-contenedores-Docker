@@ -1,0 +1,27 @@
+@startuml
+actor ClienteA
+participant "Nodo A" as NA
+participant "Nodo B" as NB
+actor ClienteB
+
+== 1. Videollamada ==
+ClienteA -> ClienteA : getUserMedia() + createOffer()
+ClienteA -> NA : WSS: offer
+NA -> NB : WS: reenvío
+NB -> ClienteB : WSS: offer
+
+ClienteB -> ClienteB : setRemote() + createAnswer()
+ClienteB -> NB : WSS: answer
+NB -> NA : WS: reenvío
+NA -> ClienteA : WSS: answer
+
+ClienteA <--> ClienteB : Candidatos ICE (vía Nodo A <-> Nodo B)
+ClienteA <--> ClienteB : Túnel P2P Establecido (Audio/Video + DataChannel)
+
+== 2. Archivo por Fragmentos ==
+ClienteA -> ClienteB : DataChannel: metadatos (nombre, tamaño, sha256)
+loop Chunks de 16 KB (bufferedAmount)
+  ClienteA -> ClienteB : DataChannel: ArrayBuffer
+end
+ClienteB -> ClienteB : Verifica tamaño y SHA-256 -> Descarga
+@enduml
