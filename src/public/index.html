@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mensajero WebRTC - UTP</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem; background: #f4f6f8; }
+    .card { background: white; padding: 1.5rem; border-radius: 8px; max-width: 500px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .badge { display: inline-block; padding: 0.25rem 0.6rem; background: #d5e8d4; color: #1a7f37; border-radius: 4px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Mensajero Distribuido WebRTC</h2>
+    <!-- Aquí mostraremos dinámicamente el nombre del contenedor que respondió -->
+    <p>Conectado al contenedor: <span id="node-name" class="badge">Cargando...</span></p>
+  </div>
+
+  <script>
+    // Al cargar la página, consultamos la ruta /api/info de nuestro servidor Node.js
+    fetch('/api/info')
+      .then(respuesta => respuesta.json()) // Convertimos la respuesta JSON a objeto JS
+      .then(datos => {
+        // Escribimos el nombre del nodo (ej. nodo-a o nodo-b) dentro de la etiqueta <span>
+        document.getElementById('node-name').textContent = datos.node;
+      })
+      .catch(() => {
+        document.getElementById('node-name').textContent = 'Error de conexión';
+      });
+  </script>
+</body>
+</html>

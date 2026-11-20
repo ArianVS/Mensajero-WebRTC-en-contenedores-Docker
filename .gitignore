@@ -1,0 +1,7 @@
+# Ignorar dependencias locales de Node
+node_modules/
+
+# Ignorar variables de entorno sensibles y registros temporales
+.env
+*.log
+.DS_Store

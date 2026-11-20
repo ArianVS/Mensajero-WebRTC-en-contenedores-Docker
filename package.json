@@ -1,0 +1,13 @@
+{
+  "name": "mensajero-webrtc-utp",
+  "version": "1.0.0",
+  "description": "Mensajero distribuido P2P con WebRTC desplegado en contenedores Docker",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.1",
+    "ws": "^8.18.0"
+  }
+}
