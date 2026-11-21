@@ -1,0 +1,58 @@
+services:
+  nodo-a:
+    build: .
+    container_name: webrtc-nodo-a
+    environment:
+      - PORT=3000
+      - NODE_NAME=nodo-a
+      - PEER_NODE_URL=ws://nodo-b:3000 # Enlace DNS al otro nodo
+    networks:
+      - webrtc-net
+
+  nodo-b:
+    build: .
+    container_name: webrtc-nodo-b
+    environment:
+      - PORT=3000
+      - NODE_NAME=nodo-b
+      - PEER_NODE_URL=ws://nodo-a:3000
+    networks:
+      - webrtc-net
+
+  caddy-proxy:
+    image: caddy:2-alpine
+    container_name: webrtc-caddy
+    ports:
+      - "8443:8443" # Acceso HTTPS a nodo-a
+      - "8444:8444" # Acceso HTTPS a nodo-b
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data # Persiste los certificados TLS generados
+    depends_on:
+      - nodo-a
+      - nodo-b
+    networks:
+      - webrtc-net
+
+  # Servidor STUN/TURN para descubrimiento de rutas ICE en WebRTC
+  coturn:
+    image: coturn/coturn:alpine
+    container_name: webrtc-coturn
+    ports:
+      - "3478:3478/udp"
+      - "3478:3478/tcp"
+    command: >
+      -n --log-file=stdout
+      --listening-port=3478
+      --realm=utp.local
+      --user=webrtc:utp2026
+      --lt-cred-mech
+    networks:
+      - webrtc-net
+
+networks:
+  webrtc-net:
+    driver: bridge
+
+volumes:
+  caddy_data:

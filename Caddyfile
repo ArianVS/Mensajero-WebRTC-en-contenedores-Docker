@@ -1,0 +1,15 @@
+# Configuración del Proxy Inverso Caddy para habilitar HTTPS local en ambos nodos.
+# 'tls internal' ordena a Caddy generar una Autoridad Certificadora (CA) local automática
+# para que el navegador permita usar cámara y micrófono (WebRTC requiere contexto seguro).
+
+# Punto de acceso para el Nodo A (Primer usuario/cliente)
+https://localhost:8443 {
+	tls internal
+	reverse_proxy nodo-a:3000
+}
+
+# Punto de acceso para el Nodo B (Segundo usuario/cliente)
+https://localhost:8444 {
+	tls internal
+	reverse_proxy nodo-b:3000
+}
